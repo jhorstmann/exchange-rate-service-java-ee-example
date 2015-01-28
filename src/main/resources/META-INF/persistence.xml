@@ -1,6 +1,5 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
     <persistence-unit name="er-unit">
-        <jta-data-source>erds</jta-data-source>
         <class>net.jhorstmann.ers.domain.model.ExchangeRate</class>
         <properties>
             <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
