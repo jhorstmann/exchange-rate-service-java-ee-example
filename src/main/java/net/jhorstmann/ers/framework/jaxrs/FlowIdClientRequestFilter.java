@@ -13,7 +13,7 @@ public class FlowIdClientRequestFilter implements ClientRequestFilter {
 
     @Override
     public void filter(final ClientRequestContext context) throws IOException {
-        final String flowId = FlowId.getOrGenerateAndSet();
+        final String flowId = FlowId.get();
         context.getHeaders().putSingle(FlowId.HTTP_HEADER, flowId);
     }
 }
