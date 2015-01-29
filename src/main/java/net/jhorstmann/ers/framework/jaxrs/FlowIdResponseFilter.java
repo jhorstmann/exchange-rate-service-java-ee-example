@@ -17,6 +17,6 @@ public class FlowIdResponseFilter implements ContainerResponseFilter {
         throws IOException {
         final String flowId = FlowId.get();
         context.getHeaders().putSingle(FlowId.HTTP_HEADER, flowId);
-
+        FlowId.unset();
     }
 }
