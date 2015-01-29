@@ -1,8 +1,8 @@
-<resources>
+<tomee>
     <!--Not used, just here as an example-->
     <Resource id="erds" type="DataSource">
         JdbcDriver org.hsqldb.jdbcDriver
         JdbcUrl jdbc:hsqldb:file:hsqldb
         UserName sa
     </Resource>
-</resources>
+</tomee>

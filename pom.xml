@@ -137,6 +137,7 @@
                             <tomeeVersion>${tomee.version}</tomeeVersion>
                             <tomeeClassifier>plus</tomeeClassifier>
                             <context>${context}</context>
+                            <config>${project.basedir}/src/test/tomee/conf</config>
                             <synchronizations>
                                 <synch>
                                     <updateOnlyExtensions>
