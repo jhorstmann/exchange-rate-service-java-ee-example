@@ -17,6 +17,8 @@
         <tomee.version>2.0.0-SNAPSHOT</tomee.version>
         <tomee.plugin.version>1.7.1</tomee.plugin.version>
         <openejb.javaee.api>6.0-6</openejb.javaee.api>
+        <slf4j.version>1.7.10</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
         <context>ROOT</context>
     </properties>
 
@@ -166,6 +168,15 @@
                             <tomeeClassifier>plus</tomeeClassifier>
                             <context>${context}</context>
                             <config>${project.basedir}/src/test/tomee/conf</config>
+
+                            <libs>
+                                <lib>log4j:log4j:${log4j.version}</lib>
+                                <!--
+                                <lib>org.slf4j:slf4j-log4j12:${slf4j.version}</lib>
+                                <lib>org.slf4j:jul-to-slf4j:${slf4j.version}</lib>
+                                -->
+                            </libs>
+                            <reloadOnUpdate>true</reloadOnUpdate>
                             <synchronizations>
                                 <synch>
                                     <updateOnlyExtensions>
@@ -204,6 +215,23 @@
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
             <scope>provided</scope>
         </dependency>
 

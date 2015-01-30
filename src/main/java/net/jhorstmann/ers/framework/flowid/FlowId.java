@@ -1,38 +1,38 @@
 package net.jhorstmann.ers.framework.flowid;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.primitives.Bytes.concat;
-import static com.google.common.primitives.Longs.toByteArray;
+import com.google.common.io.BaseEncoding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.UUID;
 
-import com.google.common.io.BaseEncoding;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.primitives.Bytes.concat;
+import static com.google.common.primitives.Longs.toByteArray;
 
 public class FlowId {
 
     public static final String HTTP_HEADER = "X-Flow-ID";
     private static final String NAME = "flow-id";
 
-    private static final ThreadLocal<String> threadLocalFlowId = new ThreadLocal<String>() {
-        @Override
-        public String toString() {
-            return NAME;
-        }
-    };
+    private static final Logger LOG = LoggerFactory.getLogger(FlowId.class);
 
     public static void set(final String flowId) throws IllegalStateException {
-
-        checkState(threadLocalFlowId.get() == null, "Flow-ID already set");
-        threadLocalFlowId.set(flowId);
+        checkState(MDC.get(NAME) == null, "Flow-ID already set");
+        MDC.put(NAME, flowId);
+        LOG.trace("Set flow id [{}]", flowId);
     }
 
     public static void unset() throws IllegalStateException {
-        checkState(threadLocalFlowId.get() != null, "Flow-ID not set");
-        threadLocalFlowId.remove();
+        String flowId = MDC.get(NAME);
+        checkState(flowId != null, "Flow-ID not set");
+        MDC.remove(NAME);
+        LOG.trace("Removed flow id [{}]", flowId);
     }
 
     public static String get() throws IllegalStateException {
-        final String flowId = threadLocalFlowId.get();
+        final String flowId = MDC.get(NAME);
         checkState(flowId != null, "Flow-ID not set");
         return flowId;
     }
@@ -55,7 +55,7 @@ public class FlowId {
     }
 
     public static String getOrGenerateAndSet() {
-        final String flowId = threadLocalFlowId.get();
+        final String flowId = MDC.get(NAME);
         return flowId != null ? flowId : generateAndSet();
     }
 
