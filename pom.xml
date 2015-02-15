@@ -19,6 +19,7 @@
         <openejb.javaee.api>6.0-6</openejb.javaee.api>
         <slf4j.version>1.7.10</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
+        <wildfly.version>8.2.0.Final</wildfly.version>
         <context>ROOT</context>
     </properties>
 
@@ -70,13 +71,13 @@
                     <plugin>
                         <groupId>com.github.kongchen</groupId>
                         <artifactId>swagger-maven-plugin</artifactId>
-                        <version>2.3.2</version>
+                        <version>2.3.3</version>
                         <configuration>
                             <apiSources>
                                 <apiSource>
                                     <locations>net.jhorstmann.ers.api</locations>
                                     <apiVersion>1.0</apiVersion>
-                                    <basePath>http://localhost:8080/</basePath>
+                                    <basePath>http://localhost:8080/api</basePath>
                                     <swaggerDirectory>${project.build.directory}/swagger-docs</swaggerDirectory>
                                 </apiSource>
                             </apiSources>
@@ -121,20 +122,34 @@
                         <version>1.5.3</version>
                         <executions>
                             <execution>
+                                <id>fix-default-url</id>
                                 <phase>prepare-package</phase>
                                 <goals>
                                     <goal>replace</goal>
                                 </goals>
+                                <configuration>
+                                    <ignoreMissingFile>true</ignoreMissingFile>
+                                    <file>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/2.0.24/index.html</file>
+                                    <regex>false</regex>
+                                    <token>http://petstore.swagger.wordnik.com/api/api-docs</token>
+                                    <value>http://localhost:8080/service.json</value>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>fix-base-path-in-service-json</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                                <configuration>
+                                    <ignoreMissingFile>true</ignoreMissingFile>
+                                    <file>${project.build.directory}/swagger-docs/service.json</file>
+                                    <regex>false</regex>
+                                    <token>http://localhost:8080/api</token>
+                                    <value>http://localhost:8080</value>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <ignoreMissingFile>true</ignoreMissingFile>
-                            <file>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/2.0.24/index.html
-                            </file>
-                            <regex>false</regex>
-                            <token>http://petstore.swagger.wordnik.com/api/api-docs</token>
-                            <value>http://localhost:8080/service.json</value>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <artifactId>maven-war-plugin</artifactId>
@@ -202,6 +217,46 @@
                                     <updateInterval>1</updateInterval>
                                 </synch>
                             </synchronizations>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <version>1.0.2.Final</version>
+                        <configuration>
+                            <port>9990</port>
+                            <address>subsystem=datasources</address>
+                            <resources>
+                                <resource>
+                                    <address>xa-data-source=java:/xa-ds-name</address>
+                                    <properties>
+                                        <jndi-name>java:jboss/xa-ds-name</jndi-name>
+                                        <enabled>true</enabled>
+                                        <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                                        <driver-name>h2</driver-name>
+                                        <pool-name>xa-pool</pool-name>
+                                        <user-name>sa</user-name>
+                                        <password>sa</password>
+                                        <validate-on-match>false</validate-on-match>
+                                        <background-validation>false</background-validation>
+                                    </properties>
+                                    <resources>
+                                        <resource>
+                                            <address>xa-datasource-properties=URL</address>
+                                            <properties>
+                                                <value>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</value>
+                                            </properties>
+                                        </resource>
+                                    </resources>
+                                </resource>
+                            </resources>
                         </configuration>
                     </plugin>
                 </plugins>

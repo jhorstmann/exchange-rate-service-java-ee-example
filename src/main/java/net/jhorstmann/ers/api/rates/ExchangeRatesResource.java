@@ -7,14 +7,16 @@ import net.jhorstmann.ers.domain.model.ExchangeRates;
 import net.jhorstmann.ers.domain.model.ValidCurrency;
 import net.jhorstmann.ers.repository.ExchangeRatesRepository;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-@Path("/api/exchange-rates")
-@Api("/api/exchange-rates")
+@Stateless
+@Path("exchange-rates")
+@Api("exchange-rates")
 @Produces({"application/xml"})
 public class ExchangeRatesResource {
     @Inject
